@@ -1,10 +1,10 @@
-[![CircleCI](https://circleci.com/gh/giantswarm/{APP-NAME}-app.svg?style=shield)](https://circleci.com/gh/giantswarm/{APP-NAME}-app)
+[![CircleCI](https://circleci.com/gh/giantswarm/gatekeeper-rules-app.svg?style=shield)](https://circleci.com/gh/giantswarm/gatekeeper-rules-app)
 
-# {APP-NAME}-app chart
+# gatekeeper-rules-app chart
 
-Giant Swarm offers a {APP-NAME} Managed App which can be installed in tenant clusters.
-Here we define the {APP-NAME} chart with its templates and default configuration.
+Giant Swarm offers a gatekeeper-rules-app Managed App which can be installed in tenant clusters.
+Here we define the gatekeeper-rules-app chart with its templates and default configuration.
 
 ## Credit
 
-* {APP HELM REPOSITORY}
+* https://github.com/open-policy-agent/gatekeeper

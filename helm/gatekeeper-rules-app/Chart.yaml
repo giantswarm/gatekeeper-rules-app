@@ -1,0 +1,10 @@
+apiVersion: v1
+description: A Helm chart for the Gatekeeper Rules
+engine: gotpl
+home: https://github.com/open-policy-agent/gatekeeper
+icon: https://avatars1.githubusercontent.com/u/16468693?s=400&v=4
+sources:
+- https://github.com/open-policy-agent/gatekeeper
+name: gatekeeper-rules-app
+appVersion: "0.0.1"
+version: "0.0.0" #[[ .Version ]]
