@@ -1,3 +1,4 @@
+{{- if .Values.rules.allowedRegistries.enabled }}
 apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
@@ -36,3 +37,4 @@ spec:
           not any(satisfied)
           msg := sprintf("container <%v> has an invalid image repo <%v>, allowed registries are %v", [container.name, container.image, input.parameters.registries])
         }
+{{ end }}
