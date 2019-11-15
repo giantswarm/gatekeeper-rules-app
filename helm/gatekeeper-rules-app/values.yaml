@@ -1,5 +1,7 @@
 rules:
     allowedRegistries:
-        enabled: false
+        enabled: true
         namespaces: 
-        registries: 
+            - production
+        registries:
+            - quay.io 
