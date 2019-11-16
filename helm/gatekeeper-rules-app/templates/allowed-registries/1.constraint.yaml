@@ -1,0 +1,16 @@
+{{- if .Values.rules.allowedRegistries.enabled }}
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: ConstraintAllowedRegistries
+metadata:
+  name: allowed-registries-constraint
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces:
+{{ required "Namespace must be defined" .Values.rules.allowedRegistries.namespaces | toYaml | indent 6}}
+  parameters:
+    registries:
+{{ required "Registries must be defined" .Values.rules.allowedRegistries.registries | toYaml | indent 6}}
+{{- end }}

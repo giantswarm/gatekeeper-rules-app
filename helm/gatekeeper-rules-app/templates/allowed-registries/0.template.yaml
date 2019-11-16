@@ -1,0 +1,42 @@
+{{- if .Values.rules.allowedRegistries.enabled }}
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: constraintallowedregistries
+  annotations:
+    "helm.sh/hook": "pre-install"
+spec:
+  crd:
+    spec:
+      names:
+        kind: ConstraintAllowedRegistries
+        listKind: ConstraintAllowedRegistriesList
+        plural: constraintallowedregistries
+        singular: constraintallowedregistries
+      validation:
+        # Schema for the `parameters` field
+        openAPIV3Schema:
+          properties:
+            registries:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package constraintallowedregistries
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          satisfied := [good | repo = input.parameters.registries[_] ; good = startswith(container.image, repo)]
+          not any(satisfied)
+          msg := sprintf("container <%v> has an invalid image repo <%v>, allowed registries are %v", [container.name, container.image, input.parameters.registries])
+        }
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.initContainers[_]
+          satisfied := [good | repo = input.parameters.registries[_] ; good = startswith(container.image, repo)]
+          not any(satisfied)
+          msg := sprintf("container <%v> has an invalid image repo <%v>, allowed registries are %v", [container.name, container.image, input.parameters.registries])
+        }
+{{ end }}
