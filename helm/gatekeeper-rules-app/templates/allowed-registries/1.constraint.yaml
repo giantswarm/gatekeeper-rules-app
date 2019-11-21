@@ -52,7 +52,7 @@ spec:
         - sh
         - -c
         - |
-          cat <<EOF | kubectl -n some apply -f -
+          cat <<EOF | kubectl apply -f -
           apiVersion: constraints.gatekeeper.sh/v1beta1
           kind: ConstraintAllowedRegistries
           metadata:
