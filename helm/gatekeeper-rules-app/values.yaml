@@ -1,3 +1,12 @@
+gatekeeper-constraint-templates:
+    rules:
+        allowedRegistries:
+            enabled: true
+            namespaces: 
+                - production
+            registries:
+                - quay.io
+
 rules:
     allowedRegistries:
         enabled: true
