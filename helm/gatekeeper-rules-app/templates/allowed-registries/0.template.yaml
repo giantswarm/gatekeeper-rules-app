@@ -3,8 +3,6 @@ apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
   name: constraintallowedregistries
-  annotations:
-    "helm.sh/hook": "pre-install"
 spec:
   crd:
     spec:

@@ -1,16 +1,74 @@
 {{- if .Values.rules.allowedRegistries.enabled }}
-apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: ConstraintAllowedRegistries
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-  name: allowed-registries-constraint
+  name: {{ include "gatekeeper-rules-app.fullname" . }}-constraints-role
+rules:
+- apiGroups:
+  - 'constraints.gatekeeper.sh'
+  resources:
+  - 'constraintallowedregistries'
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - create
+  - delete
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "gatekeeper-rules-app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: null
+  name: {{ include "gatekeeper-rules-app.fullname" . }}-manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "gatekeeper-rules-app.fullname" . }}-constraints-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "gatekeeper-rules-app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kubectl
 spec:
-  match:
-    kinds:
-      - apiGroups: [""]
-        kinds: ["Pod"]
-    namespaces:
-{{ required "Namespace must be defined" .Values.rules.allowedRegistries.namespaces | toYaml | indent 6}}
-  parameters:
-    registries:
-{{ required "Registries must be defined" .Values.rules.allowedRegistries.registries | toYaml | indent 6}}
+  template:
+    spec:
+      serviceAccountName: {{ include "gatekeeper-rules-app.fullname" . }}
+      containers:
+      - image: bitnami/kubectl:1.13.4-r245
+        name: kubectl
+        command:
+        - sh
+        - -c
+        - |
+          cat <<EOF | kubectl -n some apply -f -
+          apiVersion: constraints.gatekeeper.sh/v1beta1
+          kind: ConstraintAllowedRegistries
+          metadata:
+            name: allowed-registries-constraint
+          spec:
+            match:
+              kinds:
+                - apiGroups: [""]
+                  kinds: ["Pod"]
+              namespaces:
+          {{ required "Namespace must be defined" .Values.rules.allowedRegistries.namespaces | toYaml | indent 8}}
+            parameters:
+              registries:
+          {{ required "Registries must be defined" .Values.rules.allowedRegistries.registries | toYaml | indent 6}}
+          EOF
+        resources: {}
+      restartPolicy: Never
+status: {}
 {{- end }}
